@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Question Evaluation</title>
+    <style>
+        .upload-area {
+            width: 50%;
+            height: 200px;
+            border: 2px dashed #4a47a3;
+            line-height: 200px;
+            text-align: center;
+            font-size: 20px;
+            background: #edf2f4;
+        }
+        .upload-area:hover {
+            cursor: pointer;
+            background: #cbd5e0;
+        }
+    </style>
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("file", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("file");
+            ev.target.appendChild(document.getElementById(data));
+        }
+    </script>
+</head>
+<body>
+    <h1>Evaluate Questions</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="upload-area" id="uploadfile" ondrop="drop(event)" ondragover="allowDrop(event)">
+            Drag & Drop file here or click 'Browse'
+        </div>
+        <br>
+        <input type="file" name="file" accept=".csv" id="file" style="display: none;">
+        <input type="button" value="Browse" id="browse">
+        <br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <script>
+        let uploadArea = document.getElementById('uploadfile');
+        let fileInput = document.getElementById('file');
+        let browseButton = document.getElementById('browse');
+
+        browseButton.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function() {
+            if(fileInput.value) {
+                uploadArea.innerText = `File uploaded: ${fileInput.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1]}`;
+            }
+        });
+
+        // when file is dropped
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+
+            let files = e.dataTransfer.files;
+            fileInput.files = files;
+            uploadArea.innerText = `File uploaded: ${files[0].name}`;
+        }, false);
+
+        // when file is dragged over the area
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#999';
+        });
+
+        // when file is not over the area (drag leave)
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.background = '#edf2f4';
+        });
+
+    </script>
+</body>
+</html>
